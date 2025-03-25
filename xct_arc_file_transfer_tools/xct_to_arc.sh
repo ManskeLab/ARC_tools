@@ -1,17 +1,19 @@
 #! /bin/bash
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 ARC_HOST=arc
 XT2_HOST=xt2
-PULL_REQUEST=/Users/yousifalkhoury/work/images/sftp_pull_requests/pull_actus_dis.txt
-ARC_TARGET_PATH=/work/manske_lab/images/hrpqct/actus_dis
-FILE_CONVERTER=/Users/yousifalkhoury/scripts/Manskelab/scripts/fileConverter.py
+FILE_CONVERTER=$SCRIPT_DIR/fileConverter.py
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PULL_REQUEST=$1
+ARC_TARGET_PATH=$2
 
 # Prepare "pull to local" scripts
 echo python $SCRIPT_DIR/get_xct.py $PULL_REQUEST $XT2_HOST ./ $ARC_HOST $ARC_TARGET_PATH
 python $SCRIPT_DIR/get_xct.py $PULL_REQUEST $XT2_HOST ./ $ARC_HOST $ARC_TARGET_PATH
 
+ssh -qnx $ARC_HOST "mkdir $ARC_TARGET_PATH"
 scp -r ./temp/* $ARC_HOST:$ARC_TARGET_PATH
 
 # Iterate through each file being pulled
